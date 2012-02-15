@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sweater Vest Mercs", "Sweater Vest Mercs\Sweater Vest Mercs\Sweater Vest Mercs.csproj", "{3F606BC7-5169-48F3-8542-1E02434A8617}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sweater Vest MercsContent", "Sweater Vest Mercs\Sweater Vest MercsContent\Sweater Vest MercsContent.contentproj", "{F22A7069-CB7B-4A67-A298-A4F7ADFB0C14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game Library", "WindowsGameLibrary1\Game Library.csproj", "{688380B0-B37F-400C-955E-34ACA18FEFCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapHelper", "MapHelper\MapHelper.csproj", "{03AB8B89-A792-46BA-AE4D-1D32B7D16450}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F606BC7-5169-48F3-8542-1E02434A8617}.Debug|x86.ActiveCfg = Debug|x86
+		{3F606BC7-5169-48F3-8542-1E02434A8617}.Debug|x86.Build.0 = Debug|x86
+		{3F606BC7-5169-48F3-8542-1E02434A8617}.Release|x86.ActiveCfg = Release|x86
+		{3F606BC7-5169-48F3-8542-1E02434A8617}.Release|x86.Build.0 = Release|x86
+		{F22A7069-CB7B-4A67-A298-A4F7ADFB0C14}.Debug|x86.ActiveCfg = Debug|x86
+		{F22A7069-CB7B-4A67-A298-A4F7ADFB0C14}.Release|x86.ActiveCfg = Release|x86
+		{688380B0-B37F-400C-955E-34ACA18FEFCF}.Debug|x86.ActiveCfg = Debug|x86
+		{688380B0-B37F-400C-955E-34ACA18FEFCF}.Debug|x86.Build.0 = Debug|x86
+		{688380B0-B37F-400C-955E-34ACA18FEFCF}.Release|x86.ActiveCfg = Release|x86
+		{688380B0-B37F-400C-955E-34ACA18FEFCF}.Release|x86.Build.0 = Release|x86
+		{03AB8B89-A792-46BA-AE4D-1D32B7D16450}.Debug|x86.ActiveCfg = Debug|x86
+		{03AB8B89-A792-46BA-AE4D-1D32B7D16450}.Debug|x86.Build.0 = Debug|x86
+		{03AB8B89-A792-46BA-AE4D-1D32B7D16450}.Release|x86.ActiveCfg = Release|x86
+		{03AB8B89-A792-46BA-AE4D-1D32B7D16450}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
