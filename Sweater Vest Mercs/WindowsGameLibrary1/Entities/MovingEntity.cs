@@ -45,7 +45,7 @@ namespace SVMLib.Entities
                 else if (!_dest.Equals(Vector2.Zero))
                   Target.Position = Destination;
                 */
-                foreach ( Entity ent in GameConstants.Entities )
+                foreach ( Entity ent in GameConstants.LoadedLevel.Entities )
                 {
                     if ( ent.ContainsPoint( _dest ) )
                     {
@@ -93,6 +93,8 @@ namespace SVMLib.Entities
             Target = null;
             _dest = Vector2.Zero;
             Path = new Path();
+
+            Layer = (float) GameConstants.LAYER_RANGE_MOVING_ENTITY;
         }
 
         public MovingEntity( Texture2D tex )
@@ -106,6 +108,7 @@ namespace SVMLib.Entities
             Target = null;
             Destination = Vector2.Zero;
             Path = new Path();
+            Layer = (float) GameConstants.LAYER_RANGE_MOVING_ENTITY;
         }
 
         public MovingEntity( Texture2D tex, Rectangle src )
@@ -119,6 +122,7 @@ namespace SVMLib.Entities
             Target = null;
             Destination = Vector2.Zero;
             Path = new Path();
+            Layer = (float) GameConstants.LAYER_RANGE_MOVING_ENTITY;
         }
 
         public MovingEntity( Texture2D tex, Rectangle src, Vector2 pos )
@@ -132,6 +136,7 @@ namespace SVMLib.Entities
             Target = null;
             Destination = Vector2.Zero;
             Path = new Path();
+            Layer = (float) GameConstants.LAYER_RANGE_MOVING_ENTITY;
         }
 
         public MovingEntity( Texture2D tex, Rectangle src, Vector2 pos, float speed )
@@ -145,6 +150,7 @@ namespace SVMLib.Entities
             Target = null;
             Destination = Vector2.Zero;
             Path = new Path();
+            Layer = (float) GameConstants.LAYER_RANGE_MOVING_ENTITY;
         }
 
         public void updateDirection( Direction dir )
@@ -169,8 +175,8 @@ namespace SVMLib.Entities
             }
 
             norm.Normalize();
-            List<TileEntity> tiles = GameConstants.LoadedLevel.getTilesUnder( Position.X + ( GameConstants.NUM_PIXEL * GameConstants.SCALE * norm.X ),
-              Position.Y + ( GameConstants.NUM_PIXEL * GameConstants.SCALE * norm.Y ) );
+            List<TileEntity> tiles = GameConstants.LoadedLevel.getTilesUnder( new Vector2( Position.X + ( GameConstants.NUM_PIXEL * GameConstants.SCALE * norm.X ),
+              Position.Y + ( GameConstants.NUM_PIXEL * GameConstants.SCALE * norm.Y ) ) );
             bool collide = false;
 
             foreach ( TileEntity tile in tiles )
@@ -199,7 +205,7 @@ namespace SVMLib.Entities
             {
                 Vector2 tmp = Path.VectorPath.ElementAt( 0 );
 
-                foreach ( Entity ent in GameConstants.Entities )
+                foreach ( Entity ent in GameConstants.LoadedLevel.Entities )
                 {
                     if ( ent.ContainsPoint( tmp ) )
                     {

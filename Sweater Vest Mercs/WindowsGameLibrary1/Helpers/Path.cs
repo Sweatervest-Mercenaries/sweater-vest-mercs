@@ -31,7 +31,7 @@ namespace SVMLib.Helpers
                     return false;
             }
 
-            foreach ( Entity e in GameConstants.Entities )
+            foreach ( Entity e in GameConstants.LoadedLevel.Entities )
             {
                 if ( ( e.ContainsPoint( pos ) || ( (MovingEntity) e ).Destination.Equals( pos ) ) && !e.Equals( ent ) )
                     if ( e.Collide )
@@ -43,7 +43,7 @@ namespace SVMLib.Helpers
 
         public static Path findPath( Vector2 pos, Vector2 dest, Level level )
         {
-            foreach ( Entity ent in GameConstants.Entities )
+            foreach ( Entity ent in GameConstants.LoadedLevel.Entities )
             {
                 if ( ent.Position.Equals( pos ) )
                 {

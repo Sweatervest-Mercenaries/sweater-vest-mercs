@@ -52,9 +52,10 @@ namespace SVMLib.Tiles
             tile.ColorData = c;
             tile.TeleportID = data.TeleportID;
 
+            // Special check for buildings...
             if ( data.Sheet.Equals( Sheet.Buildings ) )
             {
-                tile.Layer = 0.001f;
+                tile.Layer = (float) GameConstants.LAYER_RANGE_BUILDING;
             }
 
             if ( tile.PathEndID != 0 )

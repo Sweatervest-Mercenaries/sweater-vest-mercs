@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using SVMLib.Helpers;
 using SVMLib.Tiles;
 using SVMLib.Visuals;
-using SVMLib.Tiles;
 
 namespace SVMLib.Entities
 {
@@ -21,7 +20,6 @@ namespace SVMLib.Entities
         public NPC( int pathId )
         {
             findPath( pathId );
-            Layer = 0;
             loadAnimations();
             IdleCycles = 250;
             CurrentCycle = 0;

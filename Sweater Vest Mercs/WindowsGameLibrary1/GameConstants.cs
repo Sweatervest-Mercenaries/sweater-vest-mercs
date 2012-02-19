@@ -7,6 +7,7 @@ using System.Globalization;
 using SVMLib.Tiles;
 using Microsoft.Xna.Framework.Input;
 using SVMLib.Entities;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace SVMLib
 {
@@ -21,8 +22,25 @@ namespace SVMLib
         public static Level LoadedLevel = null;
         public const double MAX_SPEED_VERT = 32;
         public const double MAX_SPEED_HOR = 32;
-        public static List<Entity> Entities = new List<Entity>();
         public const double TEXT_SCALE = 0.9f;
+        public static int SCREEN_MAX_X = 800;
+        public static int SCREEN_MAX_Y = 800;
+        public static SpriteFont FONT;
+
+        public const double LAYER_RANGE_TERRAIN = .99;
+        public const double LAYER_RANGE_MOVING_ENTITY = .59;
+        public const double LAYER_RANGE_BUILDING = .49;
+        public const double LAYER_RANGE_UI = .39;
+        public const double LAYER_RANGE_MENU_BACKGROUND = .29;
+        public const double LAYER_RANGE_MENU = .25;
+        public const double LAYER_RANGE_DEBUG = 0;
+
+        public const double LAYER_TEXT_OFFSET = 0.00001;
+
+        public static void DrawString(SpriteBatch batch, String str, Vector2 pos, float layer)
+        {
+            batch.DrawString( GameConstants.FONT, str, pos, Color.Black, 0, Vector2.Zero, (float) GameConstants.TEXT_SCALE, SpriteEffects.None, layer);
+        }
 
         public static Color hexToColor( String hexStr )
         {

@@ -96,6 +96,9 @@
     <Compile Include="Entities\NPC.cs" />
     <Compile Include="Helpers\NPCPath.cs" />
     <Compile Include="Helpers\Path.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Menus\Displayable.cs" />
+    <Compile Include="Menus\Menu.cs" />
     <Compile Include="Visuals\EntityEffect.cs" />
     <Compile Include="Actions\Resistance.cs" />
     <Compile Include="Entities\AnimatedEntity.cs" />

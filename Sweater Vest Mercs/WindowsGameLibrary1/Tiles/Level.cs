@@ -9,46 +9,66 @@ using SVMLib.Helpers;
 
 namespace SVMLib.Tiles
 {
+    /// <summary>
+    /// Level class. Holds all of the assets for a loaded level including tiles, entities, etc.
+    /// </summary>
     public class Level
     {
-        Texture2D texture;
+        Texture2D levelData;
         public List<TileEntity>[,] Tiles { get; set; }
         public List<NPCPath> NPCPaths { get; set; }
         public Boolean HasGravity { get; set; }
         public float Gravity { get; set; }
-        public Vector2 spawnLoc;
+        public TileEntity Spawn { get; private set; }
         public int NumTilesX { get; set; }
         public int NumTilesY { get; set; }
         public bool Loaded { get; set; }
+        public List<Entity> Entities = new List<Entity>();
 
+        /// <summary>
+        /// Main ctor. Pass in the level image.
+        /// </summary>
+        /// <param name="tex">Level image to load off of</param>
         public Level( Texture2D tex )
         {
-            texture = tex;
+            levelData = tex;
             Tiles = new List<TileEntity>[tex.Height, tex.Width];
             NPCPaths = new List<NPCPath>();
-            spawnLoc = new Vector2();
+            Spawn = new TileEntity();
             Loaded = false;
+            Entities = new List<Entity>();
             loadTiles();
         }
 
+        /// <summary>
+        /// Draws all the tiles loaded in the level
+        /// </summary>
+        /// <param name="batch">SpriteBatch to draw with.</param>
         public void DrawTiles( SpriteBatch batch )
         {
+            // Loop through all tile lists
             foreach ( List<TileEntity> list in Tiles )
             {
+                // Loop through each layer
                 foreach ( TileEntity tile in list )
                 {
+                    // Safety check
                     if ( tile != null )
                         tile.Draw( batch );
                 }
             }
         }
 
+        /// <summary>
+        /// Uses the tileData from the ctor to load a level. Each pixle = specific tile/information.
+        /// </summary>
         private void loadTiles()
         {
-            Color[] colors = new Color[texture.Width * texture.Height];
+            Color[] colors = new Color[levelData.Width * levelData.Height];
             List<TileEntity> pathTiles = new List<TileEntity>();
-            texture.GetData<Color>( colors );
-            float layer = 1;
+            levelData.GetData<Color>( colors );
+            float layer = (float) GameConstants.LAYER_RANGE_TERRAIN;
+            float layer_step = 0.0001f;
             //int indexOffset = 0;
             int mapWidth = 0, mapHeight = 0;
             int b1 = -1, b2 = -1, b3 = -1, b4 = -1;
@@ -59,6 +79,7 @@ namespace SVMLib.Tiles
             Color c;
             TileEntity tile;
 
+            // Loop through each pixle, can jump around
             for ( int i = 0; i < colors.Length; i++ )
             {
                 c = colors[i];
@@ -66,10 +87,11 @@ namespace SVMLib.Tiles
 
                 col++;
 
+                // Black is used as a special information block
                 if ( c.Equals( Color.Black ) )
                 {
                     //indexOffset = i + 1;
-                    layer -= 0.01f;
+                    layer -= layer_step;
 
                     skipRow = !skipRow;
                     row = 0;
@@ -90,7 +112,7 @@ namespace SVMLib.Tiles
                     {
                         // Already have all of our data needed, skip to the next row
                         col = -1;
-                        i += texture.Width - 1;
+                        i += levelData.Width - 1;
                         skipRow = false;
                         continue;
                     }
@@ -104,7 +126,7 @@ namespace SVMLib.Tiles
                             NumTilesX = mapWidth;
 
                             // Add one to skip the first col
-                            numSkip = texture.Width - mapWidth;
+                            numSkip = levelData.Width - mapWidth;
 
                             // DEBUG
                             Console.WriteLine( "Map Width is: " + mapWidth );
@@ -114,7 +136,7 @@ namespace SVMLib.Tiles
                         if ( b3 != -1 && mapHeight == 0 )
                         {
                             // We have at least read the first black on last line
-                            mapHeight = ( i - texture.Width ) / texture.Width;
+                            mapHeight = ( i - levelData.Width ) / levelData.Width;
                             NumTilesY = mapHeight;
 
                             // DEBUG
@@ -228,7 +250,7 @@ namespace SVMLib.Tiles
                 if ( tile.Spawn )
                 {
                     Console.WriteLine( "Added spawn" );
-                    spawnLoc = new Vector2( col, row );
+                    Spawn = tile;
                 }
             }
 
@@ -257,145 +279,112 @@ namespace SVMLib.Tiles
             Loaded = true;
         }
 
-        public void Center( Vector2 newCenter )
-        {
-            foreach ( List<TileEntity> list in Tiles )
-            {
-                foreach ( TileEntity tile in list )
-                {
-                    if ( tile != null )
-                        tile.Shift( newCenter );
-                }
-            }
-        }
-
-        public void Shift( Vector2 shiftVector )
-        {
-            foreach ( List<TileEntity> list in Tiles )
-            {
-                foreach ( TileEntity tile in list )
-                {
-                    if ( tile != null )
-                        tile.Position += shiftVector;
-                }
-            }
-        }
-
-        public List<TileEntity> getTilesAt( float x, float y )
-        {
-            int xOff = (int) x % GameConstants.NUM_PIXEL;
-            int yOff = (int) Math.Round( y / GameConstants.NUM_PIXEL );
-            //List<TileEntity> matches = new List<TileEntity>();
-
-            //foreach ( TileEntity tile in list )
-            //{
-            //    if ( tile != null )
-            //    {
-            //        if ( x >= tile.Position.X - ( GameConstants.NUM_PIXEL * GameConstants.SCALE ) && x <= tile.Position.X + ( GameConstants.NUM_PIXEL * GameConstants.SCALE )
-            //          && y >= tile.Position.Y - ( GameConstants.NUM_PIXEL * GameConstants.SCALE )
-            //          && y <= tile.Position.Y + ( GameConstants.NUM_PIXEL * GameConstants.SCALE ) )
-            //        {
-            //            matches.Add( tile );
-            //        }
-            //    }
-            //}
-
-            //return matches;
-            return Tiles[yOff, xOff];
-        }
-
-        public List<TileEntity> getTilesUnder( float x, float y )
-        {
-            return getTilesUnder( new Vector2( x, y ) );
-        }
-
+        /// <summary>
+        /// Returns a list of the tiles under a given point
+        /// </summary>
+        /// <param name="point">Point to look under</param>
+        /// <returns>List of tiles under the given point</returns>
         public List<TileEntity> getTilesUnder( Vector2 point )
         {
             int xOff = (int) Math.Round( point.X / ( GameConstants.NUM_PIXEL * GameConstants.SCALE ) );
             int yOff = (int) Math.Round( point.Y / ( GameConstants.NUM_PIXEL * GameConstants.SCALE ) );
-            List<TileEntity> matches = new List<TileEntity>();
 
-            foreach ( TileEntity tile in Tiles[yOff, xOff] )
-            {
-                if ( tile != null )
-                {
-                    if ( tile.ContainsPoint( point ) )
-                    {
-                        matches.Add( tile );
-                    }
-                }
-            }
-
-            return matches;
+            return Tiles[yOff, xOff];
         }
 
+        /// <summary>
+        /// Returns the correct npc path for the given ID
+        /// </summary>
+        /// <param name="id">ID of the NPCPath</param>
+        /// <returns>NPCPath for the given ID, null if not found</returns>
         public NPCPath getNPCPath( int id )
         {
+            // Loop through all the NPCPaths
             foreach ( NPCPath iter in NPCPaths )
             {
-                Console.WriteLine( "Start: " + iter.Start + "\tEnd: " + iter.End );
+                //Console.WriteLine( "Start: " + iter.Start + "\tEnd: " + iter.End );
                 if ( iter.ID == id )
                     return iter;
             }
             return null;
         }
 
+        /// <summary>
+        /// Ticks all tiles in the level
+        /// </summary>
         public void Tick()
         {
+            // Go through all the lists of tiles
             foreach ( List<TileEntity> list in Tiles )
             {
+                // Go through all the layers in each list
                 foreach ( TileEntity tile in list )
                 {
+                    // Safety check
                     if ( tile != null )
                         tile.Tick();
                 }
             }
         }
 
+        /// <summary>
+        /// Animates all tiles in the level
+        /// </summary>
         public void Animate()
         {
+            // Go through all the lists of tiles
             foreach ( List<TileEntity> list in Tiles )
             {
+                // Go through all the layers in each list
                 foreach ( TileEntity tile in list )
                 {
+                    // Safety check
                     if ( tile != null )
                         tile.Animate();
                 }
             }
         }
 
-        public TileEntity getSpawn()
-        {
-            foreach ( TileEntity tile in Tiles[(int) spawnLoc.Y, (int) spawnLoc.X] )
-            {
-                if ( tile != null )
-                    if ( tile.Spawn )
-                        return tile;
-            }
-            return null;
-        }
-
+        /// <summary>
+        /// Looks to see if there are any tile collisions between the two points given.
+        /// </summary>
+        /// <param name="start">Start point of the move</param>
+        /// <param name="end">End point of the move</param>
+        /// <returns>True if the move is valid, false otherwise</returns>
         public bool canMove( Vector2 start, Vector2 end )
         {
-            List<TileEntity> list;
+            List<TileEntity> list = new List<TileEntity>(), tempList;
             Vector2 tmp;
             bool endFound = false;
-            Vector2 norm = Vector2.Subtract( end, start );
-            norm.Normalize();
 
+            // Find the difference between the two points
+            Vector2 norm = Vector2.Subtract( end, start );
+            norm.Normalize(); // Unit vector it
+
+            // Loop through all unit lengths of the distance between start and end
             for ( int i = 0; i < Vector2.Subtract( start, end ).Length(); i++ )
             {
+                // Find the vector to the new point
                 tmp = norm * i;
 
-                list = getTilesUnder( start.X + tmp.X, start.Y + tmp.Y );
-                foreach ( TileEntity tile in list )
-                {
-                    //Console.WriteLine("i: " + i + " Tile: " + tile.Position.ToString());
-                    if ( tile.Collide )
-                        return false;
+                tempList = getTilesUnder( new Vector2( start.X + tmp.X, start.Y + tmp.Y ) );
 
-                    if ( tile.Position.Equals( end ) )
-                        endFound = true;
+                // Only loop through if the list is different
+                if ( !tempList.Equals( list ) )
+                {
+                    list = tempList;
+
+                    // Loop through all the tiles
+                    foreach ( TileEntity tile in list )
+                    {
+                        // Look for a collision
+                        if ( tile.Collide )
+                            return false;
+
+                        // Check to see if the current point is the ending tile
+                        if ( tile.Position.Equals( end ) || tile.ContainsPoint( end ) )
+                            endFound = true;
+                    }
                 }
 
                 if ( endFound )
@@ -405,30 +394,9 @@ namespace SVMLib.Tiles
             return false;
         }
 
-        public bool canMove( MovingEntity entity, Vector2 dest )
+        public void Save()
         {
-            List<TileEntity> list = getTilesUnder( dest.X, dest.Y );
 
-            foreach ( TileEntity tile in list )
-            {
-                if ( tile.Collide )
-                    return false;
-            }
-
-            return true;
-        }
-
-        public bool canMove( MovingEntity entity )
-        {
-            List<TileEntity> list = getTilesAt( entity.Position.X, entity.Position.Y );
-
-            foreach ( TileEntity tile in list )
-            {
-                if ( tile.Collide )
-                    return false;
-            }
-
-            return true;
         }
     }
 }

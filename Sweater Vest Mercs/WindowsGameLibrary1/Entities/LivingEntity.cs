@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SVMLib.Actions;
+using SVMLib.Items;
 
 namespace SVMLib.Entities
 {
@@ -12,11 +13,14 @@ namespace SVMLib.Entities
         public bool Alive { get { return _alive; } set { Visable = value; _alive = value; } }
         public int Heath { get; set; }
         public List<Resistance> Resistances { get; set; }
+        public List<Item> EquipedItems { get; set; }
 
         public LivingEntity()
             : base()
         {
             Alive = true;
+            Resistances = new List<Resistance>();
+            EquipedItems = new List<Item>();
         }
 
         public void DoDamage( Damage dmg )

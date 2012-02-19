@@ -17,7 +17,6 @@ namespace SVMLib.Entities
             : base()
         {
             MoveSpeed = Player_Move_Speed;
-            Layer = 0.1f;
             Collide = true;
         }
 
@@ -25,7 +24,6 @@ namespace SVMLib.Entities
             : base()
         {
             MoveSpeed = Player_Move_Speed;
-            Layer = 0.1f;
             loadAnimations();
             Collide = true;
         }

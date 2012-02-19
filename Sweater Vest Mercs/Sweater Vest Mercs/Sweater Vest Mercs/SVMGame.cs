@@ -18,6 +18,8 @@ using SVMLib.Entities;
 using SVMLib.Tiles;
 using SVMLib.Visuals;
 using SVMLib.Helpers;
+using SVMLib.Menus;
+using SVMLib.Items;
 
 namespace Sweater_Vest_Mercs
 {
@@ -44,6 +46,8 @@ namespace Sweater_Vest_Mercs
         TimeSpan Tick_Time = new TimeSpan( 100 );
         public static TileHelper tileHelper;
         MovingEntity cursor;
+        Menu menu;
+        bool menu_key_down;
 
         public SVMGame()
         {
@@ -69,8 +73,12 @@ namespace Sweater_Vest_Mercs
             graphics.PreferredBackBufferHeight = (int) ( NUM_TILES_Y * GameConstants.NUM_PIXEL * GameConstants.SCALE );
             graphics.IsFullScreen = false;
             graphics.ApplyChanges();
+
+            GameConstants.SCREEN_MAX_X = graphics.PreferredBackBufferWidth;
+            GameConstants.SCREEN_MAX_Y = graphics.PreferredBackBufferHeight;
+            GameConstants.FONT = Content.Load<SpriteFont>( "Calibri" );
+
             Window.Title = "Sweater Vest Mercenaries";
-            GameConstants.Entities.Clear();
 
             base.Initialize();
         }
@@ -104,14 +112,14 @@ namespace Sweater_Vest_Mercs
             // Load the player
             player = new Player( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture );
             player.MoveSpeed = 4f;
-            GameConstants.Entities.Add( player );
+            GameConstants.LoadedLevel.Entities.Add( player );
 
             // Load the npc
             npc = new NPC(1);
-            GameConstants.Entities.Add( npc );
+            GameConstants.LoadedLevel.Entities.Add( npc );
             for ( int i = 2; i <= level.NPCPaths.Count; i++ )
             {
-                GameConstants.Entities.Add( new NPC( i ) );
+                GameConstants.LoadedLevel.Entities.Add( new NPC( i ) );
             }
 
                 // Set the Screen Vars
@@ -127,10 +135,10 @@ namespace Sweater_Vest_Mercs
             cursor.Scale = 2.0f;
 
             // Try and find the spawn
-            TileEntity tmp = level.getSpawn();
+            TileEntity tmp = level.Spawn;
             if ( tmp != null )
             {
-                player.Position = level.getSpawn().Position;
+                player.Position = level.Spawn.Position;
             }
             else
             {
@@ -140,6 +148,13 @@ namespace Sweater_Vest_Mercs
 
             // Center the camera on the char
             centerCamera( player.Position );
+
+            menu = new Menu( MenuType.Main );
+
+            menu.Background = new Texture2D( GraphicsDevice, 1, 1 );
+            menu.Background.SetData(new[]{Color.White});
+            menu.Items.Add( new MenuItem( "Test Item 1", new Item( "THIS IS AN ITEM" ) ) );
+            menu.Items.Add( new MenuItem( "Test Item 2", new Item( "THIS IS AN ITEM" ) ) );
         }
 
         /// <summary>
@@ -207,7 +222,7 @@ namespace Sweater_Vest_Mercs
         {
             lastAnimate = time.TotalGameTime;
 
-            foreach ( Entity ent in GameConstants.Entities )
+            foreach ( Entity ent in GameConstants.LoadedLevel.Entities )
             {
                 ent.Animate();
             }
@@ -220,7 +235,7 @@ namespace Sweater_Vest_Mercs
         {
             lastTick = time.TotalGameTime;
 
-            foreach ( Entity entity in GameConstants.Entities )
+            foreach ( Entity entity in GameConstants.LoadedLevel.Entities )
             {
                 entity.Tick();
             }
@@ -232,7 +247,7 @@ namespace Sweater_Vest_Mercs
 
         private void updateMove()
         {
-            foreach ( Entity entity in GameConstants.Entities )
+            foreach ( Entity entity in GameConstants.LoadedLevel.Entities )
             {
                 if ( entity is MovingEntity )
                 {
@@ -279,11 +294,6 @@ namespace Sweater_Vest_Mercs
             //player.Center(Center);
             //player.Position = Vector2.Zero;
             //player.Position += Center;
-        }
-
-        private void testShift()
-        {
-            level.Shift( new Vector2( 1, 0 ) );
         }
 
         private void checkMoveKeys( KeyboardState keys )
@@ -371,9 +381,21 @@ namespace Sweater_Vest_Mercs
             }
             else if ( keys.IsKeyDown( Keys.D0 ) )
             {
-                player.Position = level.getSpawn().Position;
+                player.Position = level.Spawn.Position;
                 Camera.Position = Vector2.Zero;
                 centerCamera( player.Position );
+            }
+            else if ( keys.IsKeyDown( Keys.B ) && !menu_key_down )
+            {
+                menu_key_down = true;
+                if ( menu.Visable )
+                    menu.Close();
+                else
+                    menu.Open();
+            }
+            else if ( keys.IsKeyUp( Keys.B ) )
+            {
+                menu_key_down = false;
             }
         }
 
@@ -382,7 +404,7 @@ namespace Sweater_Vest_Mercs
             TileEntity tile = TileHelper.lookupTile( GameConstants.hexToColor( "267F00" ) );
             tile.Position = player.Position;
             tile.Color = new Color( 255, 255, 255, 0 );
-            GameConstants.Entities.Add( tile );
+            GameConstants.LoadedLevel.Entities.Add( tile );
         }
 
         /// <summary>
@@ -411,7 +433,7 @@ namespace Sweater_Vest_Mercs
 
         private void DrawEntities()
         {
-            foreach ( Entity entity in GameConstants.Entities )
+            foreach ( Entity entity in GameConstants.LoadedLevel.Entities )
             {
                 entity.Draw( spriteBatch );
             }
@@ -439,12 +461,13 @@ namespace Sweater_Vest_Mercs
             DrawString( "      Start: " + npc.NPCPath.Start.Position.ToString(), 7 );
             DrawString( "      End: " + npc.NPCPath.End.Position.ToString(), 8 );
             DrawString( "   PrevTarget: " + npc.PrevMoveTarget.ToString(), 9 );
+
+            menu.Draw( spriteBatch );
         }
 
         private void DrawString(String str, int row)
         {
-            SpriteFont font = Content.Load<SpriteFont>("Calibri");
-            spriteBatch.DrawString( font, str, new Vector2( 0, (float) ( row * 16 * GameConstants.TEXT_SCALE ) ), Color.Red, 0, Vector2.Zero, (float) GameConstants.TEXT_SCALE, SpriteEffects.None, 0 );
+            spriteBatch.DrawString( GameConstants.FONT, str, new Vector2( 0, (float) ( row * 16 * GameConstants.TEXT_SCALE ) ), Color.Red, 0, Vector2.Zero, (float) GameConstants.TEXT_SCALE, SpriteEffects.None, 0 );
         }
     }
 }
