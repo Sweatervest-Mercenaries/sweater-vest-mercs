@@ -47,7 +47,8 @@ namespace Sweater_Vest_Mercs
         public static TileHelper tileHelper;
         MovingEntity cursor;
         Menu menu;
-        bool menu_key_down;
+        bool menu_key_down = false;
+        bool mouse_down = false;
 
         public SVMGame()
         {
@@ -113,6 +114,7 @@ namespace Sweater_Vest_Mercs
             player = new Player( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture );
             player.MoveSpeed = 4f;
             GameConstants.LoadedLevel.Entities.Add( player );
+            GameConstants.PLAYER = player;
 
             // Load the npc
             npc = new NPC(1);
@@ -151,10 +153,37 @@ namespace Sweater_Vest_Mercs
 
             menu = new Menu( MenuType.Main );
 
-            menu.Background = new Texture2D( GraphicsDevice, 1, 1 );
-            menu.Background.SetData(new[]{Color.White});
-            menu.Items.Add( new MenuItem( "Test Item 1", new Item( "THIS IS AN ITEM" ) ) );
-            menu.Items.Add( new MenuItem( "Test Item 2", new Item( "THIS IS AN ITEM" ) ) );
+            SubMenu sub1 = new SubMenu( "Submenu 1" );
+            sub1.Items.Add( new SubMenu( "Submenu 1 : 1" ) );
+            sub1.Items.Add( new SubMenu( "Submenu 1 : 2" ) );
+
+            sub1.ItemBackground = new Texture2D( GraphicsDevice, 1, 1 );
+            sub1.ItemBackground.SetData(new[]{Color.White});
+
+            foreach ( MenuItem i in sub1.Items )
+            {
+                i.SetItemBackground( new Texture2D( GraphicsDevice, 1, 1 ) );
+                i.GetItemBackground().SetData( new[] { Color.White } );
+            }
+
+            menu.Items.Add( sub1 );
+
+            SubMenu sub2 = new SubMenu( "Submenu 2" );
+            sub2.Items.Add( new SubMenu( "Submenu 2 : 1" ) );
+            sub2.Items.Add( new SubMenu( "Submenu 2 : 2" ) );
+            
+            sub2.ItemBackground = new Texture2D( GraphicsDevice, 1, 1 );
+            sub2.ItemBackground.SetData(new[]{Color.White});
+
+            foreach ( MenuItem i in sub2.Items )
+            {
+                i.SetItemBackground( new Texture2D( GraphicsDevice, 1, 1 ) );
+                i.GetItemBackground().SetData( new[] { Color.White } );
+            }
+
+            menu.Items.Add( sub2 );
+
+            GameConstants.ActiveMenus.Add( menu );
         }
 
         /// <summary>
@@ -180,15 +209,19 @@ namespace Sweater_Vest_Mercs
             // TODO: Add your update logic here
             updateMouse();
 
-            if ( gameTime.TotalGameTime >= lastAnimate + Animate_Time )
-                Animate( gameTime );
-
-            if ( gameTime.TotalGameTime >= lastTick + Tick_Time )
-                Tick( gameTime );
-
             checkMouse();
             checkKeys();
-            updateMove();
+
+            if ( !GameConstants.PAUSED )
+            {
+                if ( gameTime.TotalGameTime >= lastAnimate + Animate_Time )
+                    Animate( gameTime );
+
+                if ( gameTime.TotalGameTime >= lastTick + Tick_Time )
+                    Tick( gameTime );
+
+                updateMove();
+            }
 
             base.Update( gameTime );
         }
@@ -196,6 +229,35 @@ namespace Sweater_Vest_Mercs
         private void checkMouse()
         {
             MouseState state = Mouse.GetState();
+
+            if ( GameConstants.mouseInBounds( state, graphics ) )
+            {
+                if ( !mouse_down && state.LeftButton.Equals( ButtonState.Pressed ) )
+                {
+                    Console.WriteLine( "Mouse click" );
+                    mouse_down = true;
+
+                    foreach ( Menu menu in GameConstants.ActiveMenus )
+                    {
+                        Console.WriteLine( "Checking menu... " + menu.Title );
+
+                        if ( menu.Visable )
+                        {
+                            Console.WriteLine( "Menu is visable..." );
+
+                            if ( menu.Contains( state.X, state.Y ) )
+                            {
+                                Console.WriteLine( "Menu contains the point..." );
+                                menu.Click( state.X, state.Y );
+                            }
+                        }
+                    }
+                }
+                else if ( mouse_down && state.LeftButton.Equals( ButtonState.Released ) )
+                {
+                    mouse_down = false;
+                }
+            }
 
             //if ( GameConstants.mouseInBounds( state, graphics ) )
             //{
@@ -312,7 +374,7 @@ namespace Sweater_Vest_Mercs
         {
             KeyboardState keys = Keyboard.GetState();
 
-            if ( !player.Moving )
+            if ( !player.Moving && !GameConstants.PAUSED )
                 checkMoveKeys( keys );
             
             if ( keys.IsKeyDown( Keys.NumPad0 ) )
@@ -418,13 +480,31 @@ namespace Sweater_Vest_Mercs
             // TODO: Add your drawing code here
             if ( level.Loaded )
             {
+                /////////////////////////////////////////////////////
+                // GAME SHIZ
+                /////////////////////////////////////////////////////
                 spriteBatch.Begin( SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, null, null, null, Camera.Transform );
                 DrawScenery();
                 DrawEntities();
                 spriteBatch.End();
 
+                /////////////////////////////////////////////////////
+                // UI SHIZ
+                /////////////////////////////////////////////////////
                 spriteBatch.Begin( SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, null, null );
+
                 DrawUI();
+
+                if ( GameConstants.PAUSED )
+                {
+                    Texture2D bl = new Texture2D( GraphicsDevice, 1, 1 );
+                    bl.SetData( new[] { new Color( 0, 0, 0, 0.5f ) } );
+
+                    spriteBatch.Draw( bl, new Rectangle( 0, 0, GameConstants.SCREEN_MAX_X, GameConstants.SCREEN_MAX_Y ), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, (float) GameConstants.LAYER_PAUSE_MESSAGE );
+
+                    spriteBatch.DrawString( GameConstants.FONT, "PAUSED", new Vector2( GameConstants.SCREEN_MAX_X / 3, GameConstants.SCREEN_MAX_Y / 3 ), Color.Red, 0, Vector2.Zero, 4, SpriteEffects.None, (float) GameConstants.LAYER_PAUSE_MESSAGE );
+                }
+
                 spriteBatch.End();
             }
 

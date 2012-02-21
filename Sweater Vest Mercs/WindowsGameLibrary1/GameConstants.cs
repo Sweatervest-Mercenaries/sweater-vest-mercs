@@ -8,6 +8,7 @@ using SVMLib.Tiles;
 using Microsoft.Xna.Framework.Input;
 using SVMLib.Entities;
 using Microsoft.Xna.Framework.Graphics;
+using SVMLib.Menus;
 
 namespace SVMLib
 {
@@ -27,15 +28,22 @@ namespace SVMLib
         public static int SCREEN_MAX_Y = 800;
         public static SpriteFont FONT;
 
+        public static List<Menu> ActiveMenus = new List<Menu>(); 
+
         public const double LAYER_RANGE_TERRAIN = .99;
         public const double LAYER_RANGE_MOVING_ENTITY = .59;
         public const double LAYER_RANGE_BUILDING = .49;
         public const double LAYER_RANGE_UI = .39;
+        public const double LAYER_PAUSE_MESSAGE = .3;
         public const double LAYER_RANGE_MENU_BACKGROUND = .29;
         public const double LAYER_RANGE_MENU = .25;
         public const double LAYER_RANGE_DEBUG = 0;
 
         public const double LAYER_TEXT_OFFSET = 0.00001;
+
+        public static Player PLAYER;
+
+        public static bool PAUSED = false;
 
         public static void DrawString(SpriteBatch batch, String str, Vector2 pos, float layer)
         {

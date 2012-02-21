@@ -29,18 +29,82 @@ namespace SVMLib.Menus
             Items = new List<MenuItem>();
             Width = 100;
             Visable = false;
-            Background = null;
             Rect = new Rectangle( 0, 0, Width, GameConstants.SCREEN_MAX_Y );
         }
 
         public void Open()
         {
             Visable = true;
+            GameConstants.PAUSED = true;
         }
 
         public void Close()
         {
             Visable = false;
+
+            foreach ( MenuItem i in Items )
+            {
+                if ( i is SubMenu )
+                    ( (SubMenu) i ).Close();
+            }
+
+            if ( !( this is SubMenu ) )
+                GameConstants.PAUSED = false;
+        }
+
+        public bool Contains(int x, int y)
+        {
+            bool result =  ( Rect.Contains( x, y ) );
+
+            if ( !result )
+            {
+                foreach ( MenuItem i in Items )
+                {
+                    if ( i is SubMenu )
+                        if ( ( (SubMenu) i ).Visable )
+                            result = ( (SubMenu) i ).Contains( x, y );
+
+                    if ( result )
+                        return true;
+                }
+            }
+
+            return result;
+        }
+
+        public bool Click(int x, int y)
+        {
+            foreach ( MenuItem item in Items )
+            {
+                Console.WriteLine( "Checking Item... " + item.GetTitle() + "\t" + item.GetItemRect() );
+
+                if ( item.GetItemRect().Contains( x, y ) )
+                {
+                    // This is the correct menu
+                    // DEBUG
+                    Console.WriteLine( item.GetTitle() + " was clicked!" );
+                    item.Click();
+
+                    if ( item is SubMenu )
+                    {
+                        foreach ( MenuItem i in Items )
+                        {
+                            if ( i is SubMenu && !i.Equals( item ) )
+                                ( (SubMenu) i ).Close();
+                        }
+                    }
+
+                    return true;
+                }
+                else if ( item is SubMenu )
+                {
+                    if ( ( (SubMenu) item ).Contains( x, y ) )
+                        if ( ( (SubMenu) item ).Visable )
+                            return ( (SubMenu) item ).Click( x, y );
+                }
+            }
+
+            return false;
         }
 
         public void Draw(SpriteBatch batch)
@@ -53,7 +117,7 @@ namespace SVMLib.Menus
                 // Background
                 if ( Background != null )
                 {
-                    batch.Draw( Background, new Rectangle( Rect.X, Rect.Y, Width, Rect.Height ),
+                    batch.Draw( Background, Rect,
                         null, Color.White, 0, Vector2.Zero, SpriteEffects.None, (float) GameConstants.LAYER_RANGE_MENU_BACKGROUND );
                 }
 
@@ -71,30 +135,15 @@ namespace SVMLib.Menus
 
                     itemPos = Vector2.Subtract( maxPos, new Vector2( Width - 10, yOffset ) );
 
-                    // Draw the item background
-                    if ( item.ItemBackground != null )
+                    if ( item.GetItemRect().IsEmpty )
                     {
-                        batch.Draw( item.ItemBackground, new Rectangle( Rect.X, Rect.Height + Rect.Y - yOffset, Width, Y_STEP ),
-                            null, Color.White, 0, Vector2.Zero, SpriteEffects.None, (float) GameConstants.LAYER_RANGE_MENU );
+                        item.SetItemRect( new Rectangle( Rect.X, Rect.Height + Rect.Y - yOffset, Width, Y_STEP ) );
                     }
 
-                    // Draw the item text
-                    GameConstants.DrawString( batch, item.Title, itemPos, (float) ( GameConstants.LAYER_RANGE_MENU - GameConstants.LAYER_TEXT_OFFSET ) );
+                    item.ItemDraw( batch );
                 }
             }
         }
     }
 
-    public class MenuItem
-    {
-        public String Title;
-        public Texture2D ItemBackground;
-        public Displayable Obj;
-
-        public MenuItem(String t, Displayable o)
-        {
-            Title = t;
-            Obj = o;
-        }
-    }
 }
