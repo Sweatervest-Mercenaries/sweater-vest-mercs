@@ -28,8 +28,8 @@ namespace Sweater_Vest_Mercs
     /// </summary>
     public class SVMGame : Microsoft.Xna.Framework.Game
     {
-        private const int NUM_TILES_X = 17;
-        private const int NUM_TILES_Y = 17;
+        private const int NUM_TILES_X = 8;
+        private const int NUM_TILES_Y = 8;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -42,8 +42,6 @@ namespace Sweater_Vest_Mercs
         public static Vector2 Center;
         TimeSpan lastAnimate;
         TimeSpan lastTick;
-        TimeSpan Animate_Time = new TimeSpan( 2000000 );
-        TimeSpan Tick_Time = new TimeSpan( 100 );
         public static TileHelper tileHelper;
         MovingEntity cursor;
         Menu menu;
@@ -206,21 +204,23 @@ namespace Sweater_Vest_Mercs
             if ( GamePad.GetState( PlayerIndex.One ).Buttons.Back == ButtonState.Pressed )
                 this.Exit();
 
-            // TODO: Add your update logic here
-            updateMouse();
-
-            checkMouse();
-            checkKeys();
-
-            if ( !GameConstants.PAUSED )
+            if (this.IsActive)
             {
-                if ( gameTime.TotalGameTime >= lastAnimate + Animate_Time )
-                    Animate( gameTime );
+              updateMouse();
 
-                if ( gameTime.TotalGameTime >= lastTick + Tick_Time )
-                    Tick( gameTime );
+              checkMouse();
+              checkKeys();
+
+              if (!GameConstants.PAUSED)
+              {
+                if (gameTime.TotalGameTime >= lastAnimate + GameConstants.ANIMATE_TIME)
+                  Animate(gameTime);
+
+                if (gameTime.TotalGameTime >= lastTick + GameConstants.TICK_TIME)
+                  Tick(gameTime);
 
                 updateMove();
+              }
             }
 
             base.Update( gameTime );
@@ -382,17 +382,17 @@ namespace Sweater_Vest_Mercs
                 player.Decorations.Clear();
                 player.Decorate( new Entity( SpriteSheet.getSpriteSheet( Sheet.Items ).Texture, SpriteSheet.getSpriteSheet( Sheet.Items ).getSourceRect( 0 ) ) );
             }
-            else if ( keys.IsKeyDown( Keys.NumPad1 ) )
+            else if ( keys.IsKeyDown( Keys.G ) )
             {
                 player.Decorations.Clear();
                 player.Decorate( new Entity( SpriteSheet.getSpriteSheet( Sheet.Items ).Texture, SpriteSheet.getSpriteSheet( Sheet.Items ).getSourceRect( 1 ) ) );
             }
-            else if ( keys.IsKeyDown( Keys.NumPad2 ) )
+            else if ( keys.IsKeyDown( Keys.H ) )
             {
                 player.Decorations.Clear();
                 player.Decorate( new Entity( SpriteSheet.getSpriteSheet( Sheet.Items ).Texture, SpriteSheet.getSpriteSheet( Sheet.Items ).getSourceRect( 2 ) ) );
             }
-            else if ( keys.IsKeyDown( Keys.NumPad3 ) )
+            else if ( keys.IsKeyDown( Keys.J ) )
             {
                 player.Decorations.Clear();
                 player.Decorate( new Entity( SpriteSheet.getSpriteSheet( Sheet.Items ).Texture, SpriteSheet.getSpriteSheet( Sheet.Items ).getSourceRect( 3 ) ) );

@@ -5,10 +5,12 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SVMLib.Menus;
+using SVMLib.Entities;
+using SVMLib.Actions;
 
 namespace SVMLib.Items
 {
-    public class Item : Displayable
+    public class Item : MenuItem, Displayable
     {
         public Texture2D Icon { get; set; }
         public String Description { get; set; }
@@ -16,6 +18,7 @@ namespace SVMLib.Items
         public bool Visable { get; set; }
         public String Name { get; set; }
         public Color ItemColor { get; set; }
+        public Stats Stats { get; set; }
 
         public Item(String name)
         {
@@ -27,19 +30,82 @@ namespace SVMLib.Items
             ItemColor = Color.White;
         }
 
-        public Texture2D GetIcon()
+        public bool EntityMeetsRequirements(LivingEntity ent)
+        {
+          return Stats <= ent.Stats;
+        }
+
+        #region MenuItem Members
+
+        bool MenuItem.Click()
+        {
+          return GameConstants.PLAYER.Equip(this);
+        }
+
+        Rectangle MenuItem.GetItemRect()
+        {
+          throw new NotImplementedException();
+        }
+
+        Displayable MenuItem.GetObject()
+        {
+          throw new NotImplementedException();
+        }
+
+        Texture2D MenuItem.GetItemBackground()
+        {
+          throw new NotImplementedException();
+        }
+
+        string MenuItem.GetTitle()
+        {
+          throw new NotImplementedException();
+        }
+
+        void MenuItem.SetItemRect(Rectangle rect)
+        {
+          throw new NotImplementedException();
+        }
+
+        void MenuItem.SetObject(Displayable obj)
+        {
+          throw new NotImplementedException();
+        }
+
+        void MenuItem.SetItemBackground(Texture2D tex)
+        {
+          throw new NotImplementedException();
+        }
+
+        void MenuItem.SetTitle(string title)
+        {
+          throw new NotImplementedException();
+        }
+
+        void MenuItem.ItemDraw(SpriteBatch batch)
+        {
+          throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Displayable Members
+
+        Texture2D Displayable.GetIcon()
         {
             return Icon;
         }
 
-        public String GetDescription()
+        string Displayable.GetDescription()
         {
             return Description;
         }
 
-        public Color GetItemColor()
+        Color Displayable.GetItemColor()
         {
             return ItemColor;
         }
+
+        #endregion
     }
 }

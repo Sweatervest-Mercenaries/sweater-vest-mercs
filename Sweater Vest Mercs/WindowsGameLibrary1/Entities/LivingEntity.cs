@@ -13,7 +13,9 @@ namespace SVMLib.Entities
         public bool Alive { get { return _alive; } set { Visable = value; _alive = value; } }
         public int Heath { get; set; }
         public List<Resistance> Resistances { get; set; }
+        public int Level { get; set; }
         public List<Item> EquipedItems { get; set; }
+        public Stats Stats { get; set; }
 
         public LivingEntity()
             : base()
@@ -21,6 +23,18 @@ namespace SVMLib.Entities
             Alive = true;
             Resistances = new List<Resistance>();
             EquipedItems = new List<Item>();
+            Level = 1;
+        }
+
+        public bool Equip(Item item)
+        {
+          if (item.EntityMeetsRequirements(this))
+          {
+            EquipedItems.Add(item);
+            return true;
+          }
+
+          return false;
         }
 
         public void DoDamage( Damage dmg )
