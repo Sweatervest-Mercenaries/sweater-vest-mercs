@@ -44,6 +44,10 @@ namespace SVMLib
         public static Player PLAYER;
 
         public static bool PAUSED = false;
+        public static bool HAS_FOCUS = false;
+
+        public static TimeSpan ANIMATE_TIME = new TimeSpan( 1000000 );
+        public static TimeSpan TICK_TIME = new TimeSpan( 100 );
 
         public static void DrawString(SpriteBatch batch, String str, Vector2 pos, float layer)
         {

@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SVMLib.Entities;
-using SVMLib.Visuals;
+using SVMLib.Visuals;                                                             
 
 namespace SVMLib.Entities
 {
@@ -34,16 +34,14 @@ namespace SVMLib.Entities
             Animations[(int) Animation_Type.Stand].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 0 ) ) );
             Animations[(int) Animation_Type.Stand].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 0 ) ) );
             Animations[(int) Animation_Type.Stand].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 0 ) ) );
-            Animations[(int) Animation_Type.Stand].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 0 ) ) );
-            Animations[(int) Animation_Type.Stand].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 1 ) ) );
             Animations[(int) Animation_Type.Stand].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 1 ) ) );
             Animations[(int) Animation_Type.Stand].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 1 ) ) );
             Animations[(int) Animation_Type.Stand].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 1 ) ) );
 
             // Walking North
-            Animations[(int) Animation_Type.Move_North].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 2 ) ) );
+            //Animations[(int) Animation_Type.Move_North].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 2 ) ) );
             Animations[(int) Animation_Type.Move_North].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 18 ) ) );
-            Animations[(int) Animation_Type.Move_North].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 2 ) ) );
+            //Animations[(int) Animation_Type.Move_North].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 2 ) ) );
             Animations[(int) Animation_Type.Move_North].AddStep( new Entity( SpriteSheet.getSpriteSheet( Sheet.Characters ).Texture, SpriteSheet.getSpriteSheet( Sheet.Characters ).getSourceRect( 34 ) ) );
 
             // Walking South

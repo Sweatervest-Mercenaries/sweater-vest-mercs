@@ -92,12 +92,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\Stats.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Entities\NPC.cs" />
     <Compile Include="Helpers\NPCPath.cs" />
     <Compile Include="Helpers\Path.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Menus\Displayable.cs" />
+    <Compile Include="Menus\InventoryItem.cs" />
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="Menus\MenuItem.cs" />
     <Compile Include="Menus\SubMenu.cs" />

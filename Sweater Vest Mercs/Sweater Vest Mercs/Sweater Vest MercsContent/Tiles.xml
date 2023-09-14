@@ -303,6 +303,18 @@
         <PathEndID>0</PathEndID>
         <TeleportID>0</TeleportID>
       </Item>
+      <!--Stairs-->
+      <Item>
+        <Name>Stairs</Name>
+        <Hex>B200FF</Hex>
+        <Sheet>Floor</Sheet>
+        <SheetPosition>25</SheetPosition>
+        <Collide>false</Collide>
+        <Spawn>false</Spawn>
+        <PathStartID>0</PathStartID>
+        <PathEndID>0</PathEndID>
+        <TeleportID>0</TeleportID>
+      </Item>
       <!--Air-->
       <Item>
         <Name>Air</Name>
